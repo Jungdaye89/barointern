@@ -1,4 +1,4 @@
-package com.sparta.barointern.controller.dto;
+package com.sparta.barointern.dto;
 
 public record SignupRequest(
 

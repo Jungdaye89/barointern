@@ -1,4 +1,4 @@
-package com.sparta.barointern.controller.dto;
+package com.sparta.barointern.dto;
 
 import com.sparta.barointern.model.Role;
 import java.util.Set;

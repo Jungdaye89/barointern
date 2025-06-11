@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sparta.barointern.controller.dto.LoginRequest;
-import com.sparta.barointern.controller.dto.LoginResponse;
-import com.sparta.barointern.controller.dto.SignupRequest;
-import com.sparta.barointern.controller.dto.SignupResponse;
+import com.sparta.barointern.dto.LoginRequest;
+import com.sparta.barointern.dto.LoginResponse;
+import com.sparta.barointern.dto.SignupRequest;
+import com.sparta.barointern.dto.SignupResponse;
 import com.sparta.barointern.service.UserService;
 
 import lombok.RequiredArgsConstructor;
