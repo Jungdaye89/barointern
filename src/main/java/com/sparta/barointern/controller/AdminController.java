@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sparta.barointern.controller.docs.AdminControllerDocs;
 import com.sparta.barointern.dto.SignupResponse;
 import com.sparta.barointern.service.AdminService;
 
@@ -15,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/admin/users")
 @RequiredArgsConstructor
-public class AdminController {
+public class AdminController implements AdminControllerDocs {
 
 	private final AdminService adminService;
 

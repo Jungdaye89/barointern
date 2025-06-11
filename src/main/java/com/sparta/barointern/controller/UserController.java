@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sparta.barointern.controller.docs.UserControllerDocs;
 import com.sparta.barointern.dto.LoginRequest;
 import com.sparta.barointern.dto.LoginResponse;
 import com.sparta.barointern.dto.SignupRequest;
@@ -16,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-public class UserController {
+public class UserController implements UserControllerDocs {
 
 	public final UserService userService;
 
