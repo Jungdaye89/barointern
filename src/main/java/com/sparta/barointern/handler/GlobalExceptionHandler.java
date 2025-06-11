@@ -21,27 +21,39 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(CustomException.class)
-	public ResponseEntity<ErrorResponse> handleCustom(CustomException ex) {
+	public ResponseEntity<ErrorResult> handleCustom(CustomException ex) {
 		ExceptionCode code = ex.getExceptionCode();
+
+		ErrorResponse response =
+			new ErrorResponse(code.getCode(), code.getMessage());
+
 		return ResponseEntity
 			.status(HttpStatus.BAD_REQUEST)
-			.body(new ErrorResponse(code.getCode(), code.getMessage()));
+			.body(new ErrorResult(response));
 	}
 
 	@ExceptionHandler(AccessDeniedException.class)
-	public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex) {
+	public ResponseEntity<ErrorResult> handleAccessDenied(AccessDeniedException ex) {
 		ExceptionCode code = ExceptionCode.ACCESS_DENIED;
+
+		ErrorResponse response =
+			new ErrorResponse(code.getCode(), code.getMessage());
+
 		return ResponseEntity
 			.status(HttpStatus.FORBIDDEN)
-			.body(new ErrorResponse(code.getCode(), code.getMessage()));
+			.body(new ErrorResult(response));
 	}
 
 	@ExceptionHandler(AuthenticationException.class)
-	public ResponseEntity<ErrorResponse> handleAuthError(AuthenticationException ex) {
+	public ResponseEntity<ErrorResult> handleAuthError(AuthenticationException ex) {
 		ExceptionCode code = ExceptionCode.INVALID_TOKEN;
+
+		ErrorResponse response =
+			new ErrorResponse(code.getCode(), code.getMessage());
+
 		return ResponseEntity
 			.status(HttpStatus.UNAUTHORIZED)
-			.body(new ErrorResponse(code.getCode(), code.getMessage()));
+			.body(new ErrorResult(response));
 	}
 
 	@Override
@@ -55,9 +67,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			.map(FieldError::getDefaultMessage)
 			.collect(Collectors.joining(", "));
 
+		ErrorResponse response =
+			new ErrorResponse("INVALID_INPUT", details);
+
 		return ResponseEntity
 			.status(HttpStatus.BAD_REQUEST)
-			.body(new ErrorResponse("INVALID_INPUT", details));
+			.body(new ErrorResult(response));
 	}
 
 	@Override
@@ -67,12 +82,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		HttpStatusCode status,
 		org.springframework.web.context.request.WebRequest request) {
 
+		ErrorResponse response =
+			new ErrorResponse("MALFORMED_JSON", "잘못된 JSON 형식입니다.");
+
 		return ResponseEntity
 			.status(HttpStatus.BAD_REQUEST)
-			.body(new ErrorResponse("MALFORMED_JSON", "잘못된 JSON 형식입니다."));
+			.body(new ErrorResult(response));
 	}
 
 	public static record ErrorResponse(
 		String code,
-		String message) {}
+		String message
+	) {}
+
+	public static record ErrorResult(
+		ErrorResponse error
+	) {}
 }
