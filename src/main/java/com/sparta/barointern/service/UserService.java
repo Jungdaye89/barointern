@@ -5,10 +5,10 @@ import java.util.Set;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.sparta.barointern.controller.dto.LoginRequest;
-import com.sparta.barointern.controller.dto.LoginResponse;
-import com.sparta.barointern.controller.dto.SignupRequest;
-import com.sparta.barointern.controller.dto.SignupResponse;
+import com.sparta.barointern.dto.LoginRequest;
+import com.sparta.barointern.dto.LoginResponse;
+import com.sparta.barointern.dto.SignupRequest;
+import com.sparta.barointern.dto.SignupResponse;
 import com.sparta.barointern.exception.CustomException;
 import com.sparta.barointern.exception.ExceptionCode;
 import com.sparta.barointern.model.User;
@@ -64,5 +64,10 @@ public class UserService {
 			);
 
 		return new LoginResponse(token);
+	}
+
+	public User findByUsername(String username) {
+		return userRepository.findByUsername(username)
+			.orElseThrow(() -> new CustomException(ExceptionCode.USER_NOT_FOUND));
 	}
 }
