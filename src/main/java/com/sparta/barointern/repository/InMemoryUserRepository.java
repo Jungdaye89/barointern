@@ -42,4 +42,9 @@ public class InMemoryUserRepository implements UserRepository {
 	public Optional<User> findById(Long id) {
 		return Optional.ofNullable(users.get(id));
 	}
+
+	public void clearAll() {
+		users.clear();
+		userIdGenerator.set(0);
+	}
 }

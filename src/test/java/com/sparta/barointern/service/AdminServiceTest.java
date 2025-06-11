@@ -38,6 +38,8 @@ class AdminServiceTest {
 	@BeforeEach
 	void initAdmin() {
 
+		userRepository.clearAll();
+
 		SignupRequest adminReq =
 			new SignupRequest(
 				"admin",
