@@ -5,12 +5,15 @@ import java.util.Set;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.sparta.barointern.controller.dto.LoginRequest;
+import com.sparta.barointern.controller.dto.LoginResponse;
 import com.sparta.barointern.controller.dto.SignupRequest;
 import com.sparta.barointern.controller.dto.SignupResponse;
 import com.sparta.barointern.exception.CustomException;
 import com.sparta.barointern.exception.ExceptionCode;
 import com.sparta.barointern.model.User;
 import com.sparta.barointern.repository.UserRepository;
+import com.sparta.barointern.security.JwtProvider;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +23,7 @@ public class UserService {
 
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final JwtProvider jwtProvider;
 
 	public SignupResponse signup(SignupRequest signupRequest) {
 
@@ -42,5 +46,23 @@ public class UserService {
 			saved.getNickname(),
 			Set.of(saved.getRole())
 		);
+	}
+
+	public LoginResponse login(LoginRequest loginRequest) {
+
+		User user = userRepository.findByUsername(loginRequest.username())
+			.orElseThrow(() -> new CustomException(ExceptionCode.INVALID_CREDENTIALS));
+
+		if (!passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
+			throw new CustomException(ExceptionCode.INVALID_CREDENTIALS);
+		}
+
+		String token =
+			jwtProvider.generateToken(
+				user.getUsername(),
+				Set.of(user.getRole().name())
+			);
+
+		return new LoginResponse(token);
 	}
 }
