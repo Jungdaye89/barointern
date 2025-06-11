@@ -1,19 +1,21 @@
 package com.sparta.barointern.handler;
 
-import java.util.stream.Collectors;
-
+import com.sparta.barointern.exception.CustomException;
+import com.sparta.barointern.exception.ExceptionCode;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.sparta.barointern.exception.CustomException;
-import com.sparta.barointern.exception.ExceptionCode;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -42,18 +44,29 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			.body(new ErrorResponse(code.getCode(), code.getMessage()));
 	}
 
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
+	@Override
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(
+		MethodArgumentNotValidException ex,
+		HttpHeaders headers,
+		HttpStatusCode status,
+		org.springframework.web.context.request.WebRequest request) {
+
 		String details = ex.getBindingResult().getFieldErrors().stream()
-			.map(e -> e.getField() + ": " + e.getDefaultMessage())
+			.map(FieldError::getDefaultMessage)
 			.collect(Collectors.joining(", "));
+
 		return ResponseEntity
 			.status(HttpStatus.BAD_REQUEST)
 			.body(new ErrorResponse("INVALID_INPUT", details));
 	}
 
-	@ExceptionHandler(HttpMessageNotReadableException.class)
-	public ResponseEntity<ErrorResponse> handleParseError(HttpMessageNotReadableException ex) {
+	@Override
+	protected ResponseEntity<Object> handleHttpMessageNotReadable(
+		HttpMessageNotReadableException ex,
+		HttpHeaders headers,
+		HttpStatusCode status,
+		org.springframework.web.context.request.WebRequest request) {
+
 		return ResponseEntity
 			.status(HttpStatus.BAD_REQUEST)
 			.body(new ErrorResponse("MALFORMED_JSON", "잘못된 JSON 형식입니다."));
